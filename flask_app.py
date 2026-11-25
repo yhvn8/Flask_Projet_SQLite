@@ -81,6 +81,15 @@ def Readfiche(post_id):
     # Rendre le template HTML et transmettre les données
     return render_template('read_data.html', data=data)
 
+@app.route('/fiche_nom/<nom>')
+def fiche_nom(nom):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
+    data = cursor.fetchall()
+    conn.close()
+    return render_template('read_data.html', data=data)
+
 
 @app.route('/consultation/')
 def ReadBDD():
