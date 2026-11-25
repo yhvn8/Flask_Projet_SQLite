@@ -76,6 +76,8 @@ def Readfiche(post_id):
     cursor.execute('SELECT * FROM clients WHERE id = ?', (post_id,))
     data = cursor.fetchall()
     conn.close()
+        if not data:
+        return "<h2>Client introuvable</h2>", 404
     # Rendre le template HTML et transmettre les données
     return render_template('read_data.html', data=data)
 
