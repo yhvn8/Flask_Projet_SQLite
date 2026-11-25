@@ -24,10 +24,15 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, 'database.db')
 
 
+#def get_db():
+#    """Ouvre une connexion à la base de données SQLite."""
+#    return sqlite3.connect(DATABASE)
+
 def get_db():
     """Ouvre une connexion à la base de données SQLite."""
-    return sqlite3.connect(DATABASE)
-
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row  # pour écrire row['nom'] au lieu de row[2]
+    return conn
 
 # Fonction pour savoir si l'utilisateur s'est authentifié
 def est_authentifie():
