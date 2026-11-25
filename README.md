@@ -1,158 +1,233 @@
-------------------------------------------------------------------------------------------------------
-PROJET ARCHITECTURE SI
-------------------------------------------------------------------------------------------------------
-Quelles sont les notions qui vont être abordées au cours de cet atelier ?
-Cet atelier a pour objectif de vous apprendre à créer des bases de données grace à Python et SQLite. Vous allez ensuite exploter cette base de données via la construction d'API. Vous allez utiliser et mettre en oeuvre au travers de cet atelier, un serveur Python utilisant le Framework Flask. 
-Vous allez créer des API, découvrir les Actions et les Secrets GitHUB pour au final mettre en service et exploiter une base de données.
-Large programme mais tout à fait accessible et ne nécessitant pas de base technique particulière. Juste de l'observation et de la rigueur dans votre travail.
+# 🗄️ Atelier « Flask + SQLite » : construire une application avec une base de données
 
--------------------------------------------------------------------------------------------------------
-Séquence 1 : GitHUB
--------------------------------------------------------------------------------------------------------
-Objectif : Création d'un Repository GitHUB pour travailler avec son projet  
-Difficulté : Très facile (~10 minutes)
--------------------------------------------------------------------------------------------------------
-GitHUB est une plateforme en ligne utilisée pour stocker le code de son programme.
-GitHUB est organisé en "Repository", c'est à dire en répertoire (contenant lui même des sous répertoires et des fichiers). Chaque Repository sera indépendant les un des autres. Un Repository doit être vu comme un projet unique (1 Repository = 1 Projet). GitHUB est une plateforme très utilisée par les informaticiens.
+Bienvenue ! 👋
 
-**Procedure à suivre :**  
-1° - Créez vous un compte sur GitHub : https://github.com/  
-Si besoin, une vidéo pour vous aider à créer votre propre compte GitHUB : [Créer un compte GitHUB](https://docs.github.com/fr/get-started/onboarding/getting-started-with-your-github-account)  
-A noter que **si vous possédez déjà un compte GitHUB, vous pouvez le conserver pour réaliser cet atelier**. Pas besion d'en créer un nouveau.  
-Remarque importante : **Lors de votre inscription, utilisez une adresse mail valide. GitHUB n'accepte pas les adresses mails temporaires**  
+Presque toutes les applications que vous utilisez (un réseau social, une boutique en ligne, l'ENT de votre école…) font la même chose : **elles enregistrent des informations dans une base de données, puis elles vous les restituent**.
 
-2° - Faites un Fork du Repository suivant : [https://github.com/OpenRSI/Flask_Projet_SQLite](https://github.com/OpenRSI/Flask_Projet_SQLite)  
-Voici une vidéo d'accompagnement pour vous aider dans les "Forks" : [Forker ce projet](https://youtu.be/p33-7XQ29zQ)    
-  
-**Travail demandé :** Créé votre compte GitHUB, faites le fork de ce projet et **copier l'URL de votre Repository GitHUB dans la discussion public**.
+Dans cet atelier, vous allez **mettre en ligne une petite application Web reliée à une base de données**, puis la faire évoluer pas à pas : lire des données, les filtrer, en enregistrer, les modifier, relier plusieurs tables, protéger l'accès, exposer une API… Jusqu'à construire **votre propre application de gestion de bibliothèque** lors de la séquence 6.
 
-Notion acquise lors de cette séquence :  
-Vous avez appris lors de cette séquence à créer des Repository pour stocker et travailler avec votre code informatique. Vous pourez par la suite travailler en groupe sur un projet. Vous avez également appris à faire des Forks. C'est à dire, faire des copies de projets déjà existant dans GitHUB que vous pourrez ensuite adapter à vos besoins.
-  
----------------------------------------------------
-Séquence 2 : Création d'un hébergement en ligne
----------------------------------------------------
-Objectif : Créer un hébergement sur Alawaysdata  
-Difficulté : Faible (~10 minutes)
----------------------------------------------------
+> 🎯 **Objectif :** savoir construire une petite solution complète *formulaire → serveur → base de données → page Web*, et comprendre chaque maillon de la chaîne.
 
-Rendez-vous sur **https://www.alwaysdata.com/fr/**  
-  
-Remarque : **Attention à bien vous rappeler de vos Login/Password** lors de la création de votre compte site car vous en aurez besoin plus tard pour la création de vos Secrets GitHUB.  
-  
-Voici une vidéo d'accompagnement pour vous aider dans cette séquence de création d'un site sur Alwaysdata : [Vidéo Alwaysdata](https://youtu.be/6cuHjy8n968)  
-  
-**Procédure :**  
-1° - Créez votre compte Alwaysdata (gratuit jusqu'à 100Mo, aucune carte nécéssaire).  
-2° - Depuis la console d'administration (Le panel d'administration de Alwaysdata) :  
- . 2.1 - Cliquez sur "Sites" (Colonne de gauche) puis **supprimer votre site PHP** (via l'icone de la Poubelle).  
- . 2.2 - **Installer ensuite une application Flask** (Bouton **+ Installer une application**).  
- . . 2.2.1 Adresses = utilisez le sous-domaine qui vous appartient que vous trouverez dans l'information " Les sous-domaines suivants vous appartiennent et sont actuellement inutilisés : {Site}.alwaysdata.net  
- . . 2.2.2 Répertoire d'installation = **/www/flask**  
- . 2.2.3 N'oubliez pas d'Accepter les conditions.  
-    
-**Travail demandé :** Mettre en ligne votre application Flask "Hello World !" et **copier l'URL de votre site dans la discussion public**.  
-  
-Notions acquises lors de cette séquence :  
-Vous avez créer un hébergement (gratuit) et découvert également que vous pouvez installer bien d'autres applications (Django, Drupal, Jenkins, Magento, Symphony, etc...). Les perspectives sont nombreuses.
+**Prérequis :** savoir lire quelques lignes de Python. Aucune connaissance en base de données n'est nécessaire.
+**Ce qu'il vous faut :** un navigateur (Chrome, Firefox ou Edge), un compte GitHub et une adresse e-mail.
 
----------------------------------------------------------------------------------------------
-Séquence 3 : Les Actions GitHUB (Industrialisation Continue)
----------------------------------------------------------------------------------------------
-Objectif : Automatiser la mise à jour de votre hébergement Alwaysdata  
-Difficulté : Moyenne (~15 minutes)
----------------------------------------------------------------------------------------------
-Dans le Repository GitHUB que vous venez de créer précédemment lors de la séquence 1, vous avez un fichier intitulé CICD.yml et qui est déposé dans le répertoire .github/workflows. Ce fichier a pour objectif d'automatiser le déploiement de votre code sur votre site Alwaysdata. Pour information, c'est ce que l'on appel des Actions GitHUB. Ce sont des scripts qui s'exécutent automatiquement lors de chaque Commit dans votre projet (C'est à dire à chaque modification de votre code). Ces scripts (appelés actions) sont au format yml qui est un format structuré proche de celui d'XML.  
+---
 
-Pour utiliser cette Action (CICD.yml), **vous avez besoin de créer des secrets dans GitHUB** afin de ne pas divulguer des informations sensibles aux internautes de passage dans votre Repository comme vos login et password par exemple.  
+## 🗺️ Comment ça marche ?
 
-Pour ce projet Métriques, **vous avez 4 secrets à créer** dans votre Repository GitHUB :  
-**USERNAME** = Le login qui est utilisé pour la connexion SSH.  
-**PASSWORD** = Le mot de passe qui est utilisé pour la connexion SSH.  
-**ALWAYSDATA_TOKEN** = Le token est à créer depuis l'interface d'administration Alwaysdata. Cliquez sur votre profil en haut à droite, puis sur 'Profil' puis sur 'Gérer les tokens'. Laissez le champ "Adresses IP autorisées" vide. Dans le cas contraire vous limiteriez les connexions seulement à une adresse IP. Pour le champ Application* mettez "Monprojet" par exemple.  
-**ALWAYSDATA_SITE_ID** = Vous trouverez l'ID de votre site depuis l'interface d'administration Alwaysdata dans les paramètres de votre site, c'est à dire la petite roue crantée à "droite" puis dans le titre #XXXXX. XXXXX étant l'ID de votre site. Ne prenez pas le # mais juste les chiffres.  
-  
-Voici une vidéo pour vous expliquer le processus de création de vos secrets dans GitHUB : [Création des secrets](https://youtu.be/pi80zRdrJyQ)  
-Vous pouvez à présent **lancer une action pour mettre en ligne votre solution**.  
+| Outil | Son rôle | Analogie |
+|---|---|---|
+| **GitHub** | Stocker votre code et garder l'historique de vos modifications | Votre classeur de travail |
+| **GitHub Actions** | Envoyer automatiquement votre code sur le serveur à chaque modification | Le livreur |
+| **PythonAnywhere** | Le serveur qui fait tourner votre application **Flask** | La boutique ouverte au public |
+| **SQLite** | La base de données : un simple fichier `database.db` sur le serveur | L'entrepôt où l'on range tout |
 
-**Dernière étape :** Pour engager l'automatisation de votre première Action, vous devez cliquer sur le gros boutton vert dans l'onglet supérieur Actions. Le boutton s'intitule "I understand my workflows, go ahead and enable them"  
-  
-![Screenshot Actions](Actions_Button.jpg)   
+```mermaid
+flowchart LR
+    A["👩‍💻 Vous<br/>modifiez le code<br/>sur GitHub"] -->|commit| B["⚙️ GitHub Actions<br/>livre le code"]
+    B -->|déploiement| C["🖥️ PythonAnywhere<br/>flask_app.py"]
+    C <-->|"requêtes SQL"| E[("🗄️ database.db<br/>(SQLite)")]
+    D["🌐 Navigateur"] -->|"requête HTTP"| C
+    C -->|"page HTML"| D
+```
 
-Notions acquises de cette séquence :  
-Vous avez vu dans cette séquence comment créer des secrets GiHUB afin de mettre en place de l'industrialisation continue.  
-L'utilité des scripts d'actions (C'est à dire des scripts exécutés lors des Commits) est très importante mais sortes malheureusement du cadre de cet atelier faute de temps. Toutefois, je vous invites à découvrir cet outil via les différentes sources du Web (Google, ChatGPT, etc..).  
+> 💡 Remarquez que **la base de données reste sur le serveur** : elle n'est pas dans GitHub, et le robot de déploiement ne la touche jamais. Ainsi, les données saisies par vos utilisateurs ne sont pas écrasées à chaque modification du code.
 
----------------------------------------------------
-Séquence 4 : Créer la base de données sur votre serveur
----------------------------------------------------
-Objectif : Créer la base de données SQLite sur votre serveur  
-Difficulté : Faible (~10 minutes)
----------------------------------------------------
-1° - Connectez vous en SSH à votre serveur Alwaysdata via l'adresse suivante :**https://ssh-{compte}.alwaysdata.net**. Remarque importante, {compte] est à remplacer par votre compte Alwaysdata. C'est à dire le compte que vous avez utilisé pour renseigner votre secret GitHUB USERNAME.   
-2° - Une fois connecté, depuis de la console SSH, executez la commande suivante : **cd www/flask** puis **python3 create_db.py**  
-Votre base de données est à présent opérationnelle sur votre serveur (Le fichier database.db à été créé dans votre répertoire sur le serveur)
-Vous pouvez, si vous le souhaitez, tappez la commande **ls** dans votre console pour voir la présence de la base de données.
+**La boucle de travail** que vous répéterez à chaque exercice :
 
-LES ROUTES (API)
--------------------------------------------
-Votre solution est à présent opérationnelle. Vous pouvez testez les routes (API) comme suit :  
-  
-https://{Votre_URL}**/**  
-Pointe sur le fichier helloWorld d'accueil  
+1. ✏️ Vous modifiez un fichier **directement sur le site de GitHub** (icône crayon ✏️), puis vous cliquez sur **Commit changes**.
+2. ⏳ Vous patientez ~30 secondes : l'onglet **Actions** de votre dépôt affiche une pastille jaune 🟡, puis verte ✅.
+3. 🔄 Vous rechargez votre site dans le navigateur : votre modification est en ligne !
 
-https://{Votre_URL}**/lecture**  
-L'accès est conditionné à un contrôle d'accès  
+---
 
-https://{Votre_URL}**/authentification**  
-Page d'authentification (admin, password)  
+## 🧩 Séquence 1 : Créer votre dépôt GitHub
 
-https://{Votre_URL}**/fiche_client/1**  
-Permet de faire un filtre sur un client. Vous pouvez changer la valeur de 1 par le N° du client de votre choix  
+**Objectif :** obtenir votre propre copie de l'atelier
+**Difficulté :** très facile (~10 minutes)
 
-https://{Votre_URL}**/consultation/**  
-Permet de consutler la base de données  
+1. Si vous n'en avez pas encore, créez un compte sur **https://github.com** (avec une adresse e-mail valide : GitHub refuse les adresses temporaires). Si vous avez déjà un compte, gardez-le.
+2. En haut de cette page, cliquez sur le bouton vert **Use this template** → **Create a new repository**.
+3. Donnez un nom à votre dépôt (par exemple `flask-sqlite`), laissez-le en **Public**, puis cliquez sur **Create repository**.
 
-https://{Votre_URL}**/enregistrer_client**  
-API pour enregistrer un nouveau client  
+Vous avez maintenant **votre propre dépôt**, indépendant de celui de l'enseignant. C'est lui que vous modifierez pendant tout l'atelier.
 
----------------------------------------------------
-Séquence 5 : Exercices
----------------------------------------------------
-Objectif : Travailler votre code  
-Difficulté : Moyenne (~60 minutes)
----------------------------------------------------
-**Exercice 1 : Création d'une nouvelle fonctionnalité**    
-Créer une nouvelle route dans votre application afin de faire une recherche sur la base du nom d'un client.  
-Cette fonctionnalité sera accéssible via la route suivante : **/fiche_nom/**  
+> ⚠️ Dans l'onglet **Actions** de votre nouveau dépôt, vous verrez peut-être déjà une croix rouge ❌. **C'est normal !** Le robot a essayé de déployer votre site, mais il ne sait pas encore où l'envoyer. On règle ça dans la séquence 3.
 
-**Exercice 2 : Protection**  
-Cette nouvelle route "/fiche_nom/" est soumise à un contrôle d'accès User. C'est à dire différent des login et mot de passe administrateur.  
-Pour accéder à cette fonctionnalité, l'utilisateur sera authentifié sous les login et mot de passe suivant : **user/12345**
-  
----------------------------------------------------
-Séquence 6 : Le projet de bibliothèque
----------------------------------------------------
-Objectif : Créer une application de biliothèque  
-Difficulté : Moyenne (~180 minutes)
----------------------------------------------------
-Votre projet consiste à present à concevoir et développer une application de gestion de bibliothèque moderne qui simplifie le processus de prêt et de retour de livres. Les fonctionnalités attendues dans le cadre de ce projet sont les suivantes :  
-•	L’enregistrement et la suppression de livres.  
-•	La recherche de livres disponibles.  
-•	L'emprunt possible d'un livre par un utilisateur.  
-•	La gestion des utilisateurs.  
-•	La gestion des stocks.  
-Votre travail est de modifier votre code afin de répondre aux besoins définis ci-dessus.
-L'application exploitera des API pour interagir avec la base de données et un contrôle d'accès Utilisateur/Administrateur doit être mis en place.  
-L’application pourra être enrichie avec des fonctionnalités supplémentaires telles que des recommandations de livres, des notifications pour les retours en retard, ou encore des rapports statistiques sur l'utilisation des livres pour améliorer l'expérience utilisateur et la gestion de la bibliothèque.  
+**Travail demandé :** copiez l'URL de votre dépôt GitHub dans la discussion publique.
 
---------------------------------------------------------------------
-Troubleshooting :
----------------------------------------------------
-Objectif : Visualiser ses logs et découvrir ses erreurs
----------------------------------------------------
-Lors de vos développements, vous serez peut-être confronté à des erreurs systèmes car vous avez faits des erreurs de syntaxes dans votre code, faits de mauvaises déclarations de fonctions, appelez des modules inexistants, mal renseigner vos secrets, etc…  
-Les causes d'erreurs sont quasi illimitées. **Vous devez donc vous tourner vers les logs de votre système pour comprendre d'où vient le problème** :  
-Voici une vidéo pour accéder aux logs de vos Actions GitHUB : [Vidéo Log GitHUB](https://youtu.be/rhGrDLSFH7Y)  
-Voici une vidéo pour vous expliquer comment accéder au logs de votre serveur Alwaysdata : [Vidéo Log Alwaysdata](https://youtu.be/URWMWqVMS2U)  
-  
+---
+
+## 🧩 Séquence 2 : Créer votre hébergement chez PythonAnywhere
+
+**Objectif :** obtenir un serveur gratuit, accessible depuis Internet
+**Difficulté :** facile (~10 minutes)
+
+> ⚠️ **Important : laissez le site PythonAnywhere en anglais !** Si votre navigateur vous propose de traduire la page en français, **refusez**. Les consignes utilisent les noms anglais des boutons (*Web*, *Add a new web app*, *Account*…). La traduction peut aussi modifier les chemins de fichiers et les noms d'utilisateur affichés, et vous recopieriez alors de mauvaises valeurs dans vos secrets.
+
+1. Rendez-vous sur **<a href="https://www.pythonanywhere.com" target="_blank">https://www.pythonanywhere.com</a>** (astuce : **Ctrl + clic**, ou **Cmd + clic** sur Mac, pour garder ces consignes sous les yeux) et créez un compte gratuit (**Pricing & signup** → **Create a Beginner account**).
+   👉 Notez bien votre **nom d'utilisateur** (*username*), vous en aurez besoin.
+2. Une fois connecté, ouvrez l'onglet **Web** (en haut à droite) puis cliquez sur **Add a new web app**.
+3. Suivez l'assistant :
+   - **Next** (le nom de domaine proposé est `votre-username.pythonanywhere.com`)
+   - Choisissez le framework **Flask**
+   - Choisissez la version de Python la plus récente
+   - Laissez le chemin proposé tel quel : `/home/votre-username/mysite/flask_app.py` → **Next**
+4. Cliquez sur le lien de votre site (`https://votre-username.pythonanywhere.com`) : vous devez voir *« Hello from Flask! »*. 🎉
+   Votre serveur fonctionne ! Pour l'instant il affiche un code d'exemple, pas encore le vôtre.
+5. Dernière chose : créez un **jeton d'API** (une sorte de mot de passe pour le robot de GitHub) :
+   menu **Account** → onglet **API Token** → **Create a new API token**. Gardez cette page ouverte.
+
+**Travail demandé :** copiez l'URL de votre site dans la discussion publique.
+
+---
+
+## 🧩 Séquence 3 : Relier GitHub et PythonAnywhere (Actions et secrets)
+
+**Objectif :** automatiser la mise à jour de votre hébergement
+**Difficulté :** moyenne (~15 minutes)
+
+Dans votre dépôt se trouve un fichier `.github/workflows/deploy-pythonanywhere.yml`. C'est une **GitHub Action** : un petit programme qui s'exécute **automatiquement à chaque modification** (*commit*) de votre code, et qui envoie vos fichiers sur PythonAnywhere. On appelle ça du **déploiement continu** (CI/CD).
+
+Pour fonctionner, ce robot a besoin de votre nom d'utilisateur et de votre jeton d'API. Mais votre dépôt est **public** : il ne faut surtout pas écrire ces informations dans le code ! On les range donc dans des **secrets**, invisibles pour les visiteurs.
+
+Dans votre dépôt GitHub : **Settings → Secrets and variables → Actions → New repository secret**, puis créez ces **4 secrets** (attention aux majuscules) :
+
+| Nom du secret | Valeur | Exemple |
+|---|---|---|
+| `PA_USERNAME` | votre nom d'utilisateur PythonAnywhere | `alice42` |
+| `PA_TOKEN` | votre jeton d'API (séquence 2, étape 5) | `3f9a...` |
+| `PA_TARGET_DIR` | le dossier de votre site (onglet **Web** → *Source code*) | `/home/alice42/mysite` |
+| `PA_WEBAPP_DOMAIN` | l'adresse de votre site, **sans** `https://` | `alice42.pythonanywhere.com` |
+
+> 🇪🇺 Si votre compte PythonAnywhere a été créé sur le site européen (`eu.pythonanywhere.com`), ajoutez un 5ᵉ secret : `PA_HOST` = `eu.pythonanywhere.com`.
+
+**Lancer le premier déploiement :** onglet **Actions** de votre dépôt → cliquez sur **Deploy to PythonAnywhere** dans la liste de gauche → bouton **Run workflow** → **Run workflow**.
+
+✅ **C'est réussi si** la pastille devient verte et que votre site affiche maintenant *« Hello from Flask Server ! 🚀 »* avec la liste des pages.
+❌ **Croix rouge ?** Cliquez dessus pour lire le message d'erreur : il indique souvent quel secret est manquant ou mal écrit.
+
+> 🤔 Si vous cliquez maintenant sur **/consultation/**, vous obtenez une erreur… C'est normal : **la base de données n'existe pas encore**. C'est l'objet de la séquence suivante.
+
+---
+
+## 🧩 Séquence 4 : Créer la base de données sur votre serveur
+
+**Objectif :** créer la base SQLite sur le serveur et découvrir l'application de départ
+**Difficulté :** facile (~15 minutes)
+
+1. Sur PythonAnywhere, ouvrez l'onglet **Consoles** puis cliquez sur **Bash**. Vous avez maintenant un terminal **sur le serveur**.
+2. Tapez les commandes suivantes (validez chaque ligne avec Entrée) :
+   ```bash
+   cd ~/mysite
+   ls
+   python3 create_db.py
+   ls
+   ```
+   Le premier `ls` montre vos fichiers, livrés par GitHub Actions. Après `create_db.py`, un nouveau fichier **`database.db`** est apparu : c'est votre base de données ! Elle a été construite à partir de `schema.sql` (la structure de la table) et remplie avec quelques clients d'exemple.
+3. Testez les **routes** de votre application :
+
+| Route | Ce qu'elle fait |
+|---|---|
+| `/` | Page d'accueil |
+| `/consultation/` | Affiche tous les clients de la base |
+| `/fiche_client/1` | Affiche le client n°1 (changez le 1 pour un autre numéro) |
+| `/enregistrer_client` | Formulaire pour enregistrer un nouveau client |
+| `/lecture` | Page protégée par un contrôle d'accès |
+| `/authentification` | Page de connexion (`admin` / `password`) |
+
+> ⚠️ `create_db.py` **efface puis recrée** la base. Relancez-le seulement si vous voulez repartir de zéro : toutes les données saisies seront perdues.
+
+---
+
+## 🧩 Séquence 5 : Les exercices
+
+**Objectif :** apprendre à enregistrer et restituer des informations, une notion à la fois
+**Difficulté :** progressive (~4 heures au total)
+
+Faites les exercices **dans l'ordre** : chacun s'appuie sur le précédent, et chacun prépare une partie du projet de la séquence 6. Chaque exercice contient :
+- 🎯 ce que vous allez découvrir,
+- 🛠️ ce qu'il faut faire,
+- 👀 ce qu'il faut observer,
+- 📝 des questions auxquelles répondre dans le fichier [`CARNET.md`](CARNET.md) de votre dépôt,
+- 🧩 un défi pour aller plus loin.
+
+| # | Exercice | Notion découverte | Durée |
+|---|---|---|---|
+| | **🟢 Niveau 1 — Lire les données** | | |
+| 1 | [Explorer la base en SQL](exercices/01-explorer-la-base.md) | Table, colonne, ligne, `SELECT`, `WHERE` | 20 min |
+| 2 | [Afficher les données proprement](exercices/02-afficher-les-donnees.md) | Python → SQL → template | 20 min |
+| 3 | [Rechercher un client](exercices/03-rechercher.md) | Paramètres, `LIKE`, injection SQL | 30 min |
+| | **🔵 Niveau 2 — Enregistrer les données** | | |
+| 4 | [Enregistrer un client](exercices/04-enregistrer.md) | `INSERT`, formulaire POST, validation | 25 min |
+| 5 | [Modifier et supprimer](exercices/05-modifier-supprimer.md) | `UPDATE`, `DELETE`, le CRUD | 30 min |
+| | **🟣 Niveau 3 — Structurer les données** | | |
+| 6 | [Faire évoluer la base](exercices/06-faire-evoluer-la-base.md) | Schéma, `ALTER TABLE`, perte de données | 20 min |
+| 7 | [Relier deux tables](exercices/07-relier-deux-tables.md) | Clé étrangère, `JOIN`, `GROUP BY` | 40 min |
+| | **🔴 Niveau 4 — Sécuriser et ouvrir** | | |
+| 8 | [Contrôle d'accès](exercices/08-controle-acces.md) | Sessions, rôles admin / user | 30 min |
+| 9 | [Créer une API](exercices/09-api-json.md) | API REST, JSON | 30 min |
+
+> 💡 **Astuce :** pour modifier un fichier sur GitHub, ouvrez-le puis cliquez sur le crayon ✏️. Pour **créer** un fichier, utilisez **Add file → Create new file** et tapez par exemple `templates/recherche.html` : le `/` crée le dossier automatiquement.
+
+---
+
+## 🧩 Séquence 6 : Le projet de bibliothèque
+
+**Objectif :** concevoir et développer votre propre application de gestion de bibliothèque
+**Difficulté :** moyenne (~3 heures)
+
+Vous allez maintenant réutiliser **tout ce que vous avez appris** pour construire une application de gestion de bibliothèque qui simplifie le prêt et le retour de livres :
+
+- l'enregistrement et la suppression de livres ;
+- la recherche de livres disponibles ;
+- l'emprunt et le retour d'un livre par un utilisateur ;
+- la gestion des utilisateurs ;
+- la gestion des stocks ;
+- un contrôle d'accès **Utilisateur / Administrateur** et des **API** pour interagir avec la base.
+
+👉 Le cahier des charges complet, le modèle de données conseillé, les étapes et la grille d'évaluation sont ici : **[Projet bibliothèque](exercices/10-projet-bibliotheque.md)**.
+
+---
+
+## 🧠 Dépannage
+
+Vous allez faire des erreurs : **c'est normal, et c'est comme ça qu'on apprend !**
+
+**1. Le robot GitHub a une croix rouge ❌**
+Onglet **Actions** → cliquez sur l'exécution en rouge → lisez le message. Le plus souvent : un secret manquant ou mal recopié, ou une erreur de syntaxe Python (l'étape *Check Python syntax* vous indique alors la ligne fautive).
+
+**2. Le site affiche « Something went wrong » ou une erreur 500**
+Votre code Python contient probablement une erreur. Allez lire les **journaux** (*logs*) de votre serveur : sur PythonAnywhere, onglet **Web** → section **Log files** :
+
+| Journal | Ce qu'il contient |
+|---|---|
+| **Error log** | Les erreurs Python. **Lisez la fin du fichier** : la dernière ligne indique l'erreur, et quelques lignes au-dessus le numéro de ligne fautif. |
+| **Access log** | Toutes les visites reçues par votre site |
+| **Server log** | Les démarrages et arrêts du serveur |
+
+**3. Ma modification n'apparaît pas**
+- La pastille de l'onglet **Actions** est-elle bien verte ?
+- Forcez le rechargement de la page : **Ctrl + F5** (ou **Cmd + Shift + R** sur Mac).
+- Vous avez modifié `schema.sql` ? Le changement de code ne suffit pas : il faut aussi **modifier la base sur le serveur** (voir l'[exercice 6](exercices/06-faire-evoluer-la-base.md)).
+
+**4. Mon site a disparu au bout de quelques semaines**
+Les comptes gratuits PythonAnywhere doivent être réactivés régulièrement : onglet **Web** → bouton **Run until 3 months from today**.
+
+**Erreurs fréquentes :**
+
+| Message | Cause probable |
+|---|---|
+| `sqlite3.OperationalError: no such table: clients` | La base n'a pas été créée sur le serveur (séquence 4), ou la table a un autre nom |
+| `sqlite3.OperationalError: no such column: xxx` | Faute de frappe dans le nom d'une colonne, ou la colonne n'existe pas encore dans la base du serveur (exercice 6) |
+| `sqlite3.OperationalError: near "xxx": syntax error` | Erreur dans votre requête SQL : testez-la d'abord dans la console `sqlite3` (exercice 1) |
+| `sqlite3.IntegrityError: FOREIGN KEY constraint failed` | Vous supprimez une ligne encore utilisée par une autre table, ou vous référencez un `id` qui n'existe pas (exercice 7) |
+| `sqlite3.OperationalError: database is locked` | Une connexion est restée ouverte après une erreur : vérifiez que `conn.close()` est toujours exécuté (`try` / `finally`, exercice 7), puis rechargez la web app (onglet **Web** → **Reload**) |
+| `sqlite3.IntegrityError: NOT NULL constraint failed` | Vous insérez une ligne sans remplir une colonne obligatoire |
+| `sqlite3.ProgrammingError: Incorrect number of bindings` | Le nombre de `?` ne correspond pas au nombre de valeurs. Pour une seule valeur, n'oubliez pas la virgule : `(nom,)` |
+| `IndentationError` | Les espaces en début de ligne ne sont pas alignés |
+| `SyntaxError` | Une parenthèse, un guillemet ou deux-points `:` oublié |
+| `NameError: name 'xxx' is not defined` | Une faute de frappe, ou un `import` oublié |
+| `TemplateNotFound` | Le fichier HTML n'est pas dans le dossier `templates/` ou son nom est mal écrit |
+| `BadRequestKeyError` (erreur 400) | `request.form['xxx']` : aucun champ `name="xxx"` dans le formulaire |
+| `AssertionError: View function mapping is overwriting...` | Deux fonctions portent le même nom dans `flask_app.py` |

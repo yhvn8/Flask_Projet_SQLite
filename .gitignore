@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# La base de données vit sur le serveur, pas dans GitHub
+*.db

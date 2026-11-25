@@ -1,0 +1,95 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        shell: bash
+        env:
+          PA_USERNAME: ${{ secrets.PA_USERNAME }}
+          PA_TOKEN: ${{ secrets.PA_TOKEN }}
+          PA_TARGET_DIR: ${{ secrets.PA_TARGET_DIR }}
+          PA_WEBAPP_DOMAIN: ${{ secrets.PA_WEBAPP_DOMAIN }}
+        run: |
+          missing=0
+          for name in PA_USERNAME PA_TOKEN PA_TARGET_DIR PA_WEBAPP_DOMAIN; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Le secret ${name} est manquant. Ajoutez-le dans Settings → Secrets and variables → Actions."
+              missing=1
+            fi
+          done
+          if [[ "$missing" -ne 0 ]]; then
+            echo "Il manque des secrets : c'est normal si vous venez de créer votre dépôt."
+            echo "Créez les 4 secrets (voir README), puis relancez ce workflow (Actions → Run workflow)."
+            exit 1
+          fi
+          echo "Les 4 secrets sont bien présents ✅"
+
+      - name: Check Python syntax
+        run: python -m py_compile flask_app.py create_db.py
+
+      - name: Upload files and reload the web app
+        shell: bash
+        env:
+          PA_USERNAME: ${{ secrets.PA_USERNAME }}
+          PA_TOKEN: ${{ secrets.PA_TOKEN }}
+          PA_TARGET_DIR: ${{ secrets.PA_TARGET_DIR }}
+          PA_WEBAPP_DOMAIN: ${{ secrets.PA_WEBAPP_DOMAIN }}
+          PA_HOST: ${{ secrets.PA_HOST }}
+        run: |
+          set -euo pipefail
+          TARGET_DIR="${PA_TARGET_DIR%/}"
+
+          # Optionnel : secret PA_HOST = "eu.pythonanywhere.com" si votre compte est sur le site européen.
+          HOST="${PA_HOST:-www.pythonanywhere.com}"
+
+          echo "Using PythonAnywhere host: ${HOST}"
+          echo "Target directory: ${TARGET_DIR}"
+
+          # Envoi de chaque fichier ; les dossiers distants sont créés automatiquement par l'API.
+          while IFS= read -r -d '' file; do
+            rel="${file#./}"
+
+            case "$rel" in
+              # Les consignes de l'atelier n'ont pas besoin d'être sur le serveur
+              exercices/*|*.md) continue ;;
+              # ⚠️ Ne JAMAIS écraser la base de données du serveur :
+              # elle contient les données saisies par vos utilisateurs !
+              *.db|*.sqlite|*.sqlite3) continue ;;
+            esac
+
+            remote_path="${TARGET_DIR}/${rel}"
+            echo " - ${rel} -> ${remote_path}"
+
+            curl -sS --fail -X POST \
+              -H "Authorization: Token ${PA_TOKEN}" \
+              -F "content=@${file}" \
+              "https://${HOST}/api/v0/user/${PA_USERNAME}/files/path${remote_path}" \
+              >/dev/null
+
+          done < <(
+            find . \
+              -type d \( -name .git -o -name .github -o -name .venv -o -name __pycache__ -o -name node_modules \) -prune -false \
+              -o -type f \
+                ! -name ".DS_Store" \
+                ! -name "*.pyc" \
+                -print0
+          )
+
+          echo "Reloading webapp ${PA_WEBAPP_DOMAIN}..."
+          curl -sS --fail -X POST \
+            -H "Authorization: Token ${PA_TOKEN}" \
+            "https://${HOST}/api/v0/user/${PA_USERNAME}/webapps/${PA_WEBAPP_DOMAIN}/reload/" \
+            >/dev/null
+
+          echo "Deployed. Try: https://${PA_WEBAPP_DOMAIN}/"
