@@ -41,19 +41,19 @@
 
 1. Décrivez avec vos mots le trajet d'une requête, du navigateur jusqu'à la base de données, puis le retour.
 
-   > _Ma réponse :_ 
+   > _Ma réponse :_ Le navigateur effectue une action sur le site et demande des renseignements à la base de donnée, celle ci charge les tables et éléments qu'elle contient, elle se base sur l'URL pour trouver le chemin afin de retourner les informations au navigateur. Le navigateur récupère ses informations sous format HTML et interprète le contenu et les informations. 
 
 2. Pourquoi faut-il **fermer** la connexion (`conn.close()`) après chaque requête ?
 
-   > _Ma réponse :_ 
+   > _Ma réponse :_ Il faut fermer la connexion après chaque utilisation pour libérer les ressources et éviter de laisser des connexions inutilisées ouvertes
 
 3. Quel est l'avantage d'écrire `row['nom']` plutôt que `row[2]` ? (Pensez à ce qui arriverait si on ajoutait une colonne au milieu de la table.)
 
-   > _Ma réponse :_ 
+   > _Ma réponse :_ Ca permet de directement reconnaître la colonne associé dans notre base de donnée, en laissant 2 on aurait une erreur de contradiction entre les appellations dans le fichier HTML et dans la base de donnée. 
 
 4. Pourquoi est-il préférable de trier avec `ORDER BY` dans la requête SQL plutôt qu'en Python ?
 
-   > _Ma réponse :_ 
+   > _Ma réponse :_ Je pense qu'il est préférable de trier dans la requête SQL car les modifs se font directement dans l'application ou le logiciel qui gère les données de la BDD, donc plus efficacement que Python qui n'y est pas directement lié.
 
 ---
 
